@@ -60,7 +60,7 @@ python constraint_optimization/example_all_constraints.py
 Ниже показан график убывания функции потерь для разных комбинаций методов и множеств:
 
 <p align="center">
-  <img src="comparison.png" alt="График сравнения Frank-Wolfe и Projected Gradient" width="600"/>
+  <img src="../comparison.png" alt="График сравнения Frank-Wolfe и Projected Gradient" width="600"/>
 </p>
 
 На графике сравнивается скорость сходимости для:
@@ -70,6 +70,65 @@ python constraint_optimization/example_all_constraints.py
 
 ✅ Методы Projected Gradient гарантируют строгое соблюдение ограничений.
 ⚙️ Frank–Wolfe может выходить за границу множества из-за линейного шага, но остаётся близким к ней.
+
+---
+
+## 📈 Теоретическая и практическая сходимость
+
+### 🔹 Projected Gradient Descent (PGD)
+
+$$
+x_{t+1} = \Pi_{\mathcal{C}}(x_t - \eta_t \nabla f(x_t))
+$$
+
+**Сходимость:**
+
+- Для выпуклой и L-гладкой функции f:
+
+$$
+f(x_t) - f^\star = \mathcal{O}\!\left(\frac{1}{t}\right)
+$$
+
+- Для µ-сильно выпуклой f:
+
+$$
+f(x_t) - f^\star = \mathcal{O}\!\left((1 - \mu/L)^t\right)
+$$
+
+---
+
+### 🔹 Frank–Wolfe (FW)
+
+$$
+s_t = \arg\min_{s \in \mathcal{C}} \langle \nabla f(x_t), s \rangle, 
+\qquad
+x_{t+1} = (1 - \gamma_t)x_t + \gamma_t s_t
+$$
+
+**Сходимость:**
+
+- Для выпуклой f:
+
+$$
+f(x_t) - f^\star = \mathcal{O}\!\left(\frac{1}{t}\right)
+$$
+
+- Для сильно выпуклой f и строго выпуклого множества \mathcal{C}:
+
+$$
+f(x_t) - f^\star = \mathcal{O}\!\left(\frac{1}{t^2}\right)
+$$
+
+
+---
+
+| Свойство         | Projected Gradient              | Frank–Wolfe                       |
+| ---------------- | ------------------------------- | --------------------------------- |
+| Требует проекции | ✅                               | ❌                                 |
+| Стоимость шага   | высокая                         | низкая                            |
+| Сходимость       | \(\mathcal{O}(1/t)\) или линейная | \(\mathcal{O}(1/t)\)              |
+| Решения          | плотные                         | разреженные                       |
+| На практике      | устойчивая сходимость           | мягкое поведение, но менее точное |
 
 ---
 
@@ -118,11 +177,7 @@ class MyOptimizer(torch.optim.Optimizer):
 ## 📚 Литература
 
 * Jaggi, M. (2013). *Revisiting Frank-Wolfe: Projection-Free Sparse Convex Optimization*
+* Lacoste-Julien, S. (2016). *Convergence rate of Frank-Wolfe for non-convex objectives*
+* Beck, A. (2017). *First-Order Methods in Optimization*
 * Bertsekas, D. (1999). *Nonlinear Programming*
-
----
-
-## 📝 Лицензия
-
-MIT License © 2025
 
